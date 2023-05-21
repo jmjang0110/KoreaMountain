@@ -40,7 +40,9 @@ import http.client
 class DataManager :
     def __init__(self):
         self.Url            = ""  # API 요청을 위한 URL 
+        self.Query          = ""  
         self.ServiceKey     = ""  # 공공 포털 데이터에서 받은 인증키 
+        self.urlDetail      = ""
         self.Params         = {}
         
         self.Response       = None
@@ -58,22 +60,17 @@ class DataManager :
         if(self.Response.status_code == 200):
             i = 0
 
-        
         self.Root           = ET.fromstring(self.Response.text)
         self.ItemElements   = self.Root.iter('items')
 
     def LoadByHttp(self):
-        Url_apis_data    =  'apis.data.go.kr'
-        query_Weather   = "/1360000/VilageFcstInfoService_2.0/getUltraSrtNcst?serviceKey=" + self.ServiceKey
+        addServiceKey = '?serviceKey=' + self.ServiceKey
+        ResultUrl = self.Query + addServiceKey
+        if(self.urlDetail != ""):
+             ResultUrl = ResultUrl + self.urlDetail
 
-        url             = "openapi.forest.go.kr"
-        query           = "/openapi/service/trailInfoService/getforeststoryservice?serviceKey=" + self.ServiceKey
-        
-        ProfessorServiceKey    = "sea100UMmw23Xycs33F1EQnumONR%2F9ElxBLzkilU9Yr1oT4TrCot8Y2p0jyuJP72x9rG9D8CN5yuEs6AS2sAiw%3D%3D"
-        query_hospital        = "/B551182/hospInfoServicev2/getHospBasisList?serviceKey=" + self.ServiceKey
-
-        conn    = http.client.HTTPConnection(Url_apis_data)
-        conn.request("GET", query)
+        conn    = http.client.HTTPConnection(self.Url)
+        conn.request("GET", ResultUrl)
         req     = conn.getresponse()
 
         if req.status == 200:
@@ -103,12 +100,20 @@ class DataManager :
 # [ SET ]
     def SetURL(self, url):
         self.Url = url
+
+    def SetQuery(self, query):
+        self.Query = query
+
     
     def SetParams(self, params):
         self.Params = params 
     
     def SetServiceKey(self, serviceKey):
         self.ServiceKey = serviceKey
+
+    def SetUrlDetail(self, urlDetail):
+        self.urlDetail = urlDetail
+
 
 
 
