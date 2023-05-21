@@ -33,6 +33,9 @@ queryParams = {
 
 import requests
 import xml.etree.ElementTree as ET
+from urllib.parse import urlencode, quote_plus, unquote, quote
+
+import http.client
 
 class DataManager :
     def __init__(self):
@@ -46,11 +49,37 @@ class DataManager :
 
     
     def ExecuteResponse(self):
+        decoded_Key = unquote(self.ServiceKey)
+        queryParams = urlencode({quote_plus(self.ServiceKey) : decoded_Key, quote_plus('LAWD_CD') : '11110'})        
+ 
         self.Response       = requests.get(self.Url, params = self.Params)
-        self.Root           = ET.fromstring(self.Response.text)
-        self.ItemElements   = self.Root.iter('item')
-
         print(self.Response.content)
+
+        if(self.Response.status_code == 200):
+            i = 0
+
+        
+        self.Root           = ET.fromstring(self.Response.text)
+        self.ItemElements   = self.Root.iter('items')
+
+    def LoadByHttp(self):
+        Url_apis_data    =  'apis.data.go.kr'
+        query_Weather   = "/1360000/VilageFcstInfoService_2.0/getUltraSrtNcst?serviceKey=" + self.ServiceKey
+
+        url             = "openapi.forest.go.kr"
+        query           = "/openapi/service/trailInfoService/getforeststoryservice?serviceKey=" + self.ServiceKey
+        
+        ProfessorServiceKey    = "sea100UMmw23Xycs33F1EQnumONR%2F9ElxBLzkilU9Yr1oT4TrCot8Y2p0jyuJP72x9rG9D8CN5yuEs6AS2sAiw%3D%3D"
+        query_hospital        = "/B551182/hospInfoServicev2/getHospBasisList?serviceKey=" + self.ServiceKey
+
+        conn    = http.client.HTTPConnection(Url_apis_data)
+        conn.request("GET", query)
+        req     = conn.getresponse()
+
+        if req.status == 200:
+            strXML = req.read().decode('utf-8')
+            print(strXML)
+
 
 
     def Test(self):

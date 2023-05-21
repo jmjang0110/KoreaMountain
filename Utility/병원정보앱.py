@@ -85,9 +85,13 @@ def Search(sgguCD):
 
     if req.status == 200:
         strXml = req.read().decode('utf-8')
-        #print(strXml)
+        print(strXml)
+        print(req.status)
+        print(req.reason)
+        
         from xml.etree import ElementTree
         tree = ElementTree.fromstring(strXml)
+
         # item 엘리먼트를 가져옵니다.
         itemElements = tree.iter("item")  # return list type
         #print(itemElements)
