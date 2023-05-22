@@ -96,9 +96,9 @@ def Search(sgguCD):
         itemElements = tree.iter("item")  # return list type
         #print(itemElements)
         for item in itemElements:
-            addr = item.find("addr")    #병원주소
-            name = item.find("yadmNm")  #병원명
-            telno = item.find("telno")  #전화번호
+            addr    = item.find("addr")    #병원주소
+            name    = item.find("yadmNm")  #병원명
+            telno   = item.find("telno")  #전화번호
             DataList.append((name.text,addr.text,telno.text))
 
 

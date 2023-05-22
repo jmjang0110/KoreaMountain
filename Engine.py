@@ -1,44 +1,30 @@
 
-from DataManager import * 
+from Data.DataManager   import * 
+from Data.MountainData  import *
+from Data.WeatherData   import *
+
 
 def main():
     print("main Start")
-    dataManager = DataManager()
 
-    ForestInfo_Url          = "http://openapi.forest.go.kr/openapi/service/trailInfoService/getforeststoryservice"
-    ServiceKey_Decoding     = "+yY6uDPSsSxcus1uooXFx/zRum0tkPSjL6UOVng/QZHTrA/yyKGcyti2eE5gRq5V++1O7r9B6pJTqDyMov6/iw=="
-    ServiceKey_Encoding     = "%2ByY6uDPSsSxcus1uooXFx%2FzRum0tkPSjL6UOVng%2FQZHTrA%2FyyKGcyti2eE5gRq5V%2B%2B1O7r9B6pJTqDyMov6%2Fiw%3D%3D"
+    MntData =   MountainData()
+    WeaData =   WeatherData()
 
-    Params      = {
-            'serviceKey'        :       'ServiceKey'
-        ,   'mntnNm'            :       '지리산'
-        ,   'mntnHght'          :       ''
-        ,   'mntnAdd'           :       ''
-        ,   'mntnInfoAraCd'     :       ''
-        ,   'mntnInfoSsnCd'     :       ''
-        ,   'mntnInfoThmCd'     :       ''
-        ,   'pageNo'            :       ''
-        ,   'numOfRows'         :       '' 
-    }
-
-    Url_Weather =  'apis.data.go.kr'
-    params_Weather ={'serviceKey' : '서비스키', 'pageNo' : '1', 'numOfRows' : '1000', 'dataType' : 'XML', 'base_date' : '20210628', 'base_time' : '0600', 'nx' : '55', 'ny' : '127' }
-
+    ResList = [ 
+            MNT_RES_TYPE.NAME
+        ,   MNT_RES_TYPE.HEIGHT
+        ,   MNT_RES_TYPE.ADDRESS
+        ,   MNT_RES_TYPE.INFO_MAIN
+        ,   MNT_RES_TYPE.INFO_MAP_IMG
+        ]
     
-    url     = 'openapi.forest.go.kr'
-    query   = '/openapi/service/trailInfoService/getforeststoryservice'
+    MntData.AddSubUrl(MNT_REQ_TYPE.ADDRESS, DataManager.GetEncode_Utf8('서울'))
+    MntData.AddSubUrl(MNT_REQ_TYPE.MAXNUM_OF_RESULT, '50')
+    SubUrl = MntData.GetSubUrl()
 
-
-
-    dataManager.SetURL(Url_Weather)
-    dataManager.SetServiceKey(ServiceKey_Encoding) # Encoding 으로 해야 파싱됨 
-    dataManager.SetParams(Params)
-    dataManager.SetQuery("/1360000/VilageFcstInfoService_2.0/getUltraSrtNcst")
-    dataManager.SetUrlDetail("&numOfRows=10&pageNo=1&base_date=20210628&base_time=0600&nx=55&ny=127")
-    dataManager.LoadByHttp()
-
-    #dataManager.Test()
-   
+    MntData.ConnectToData(SubUrl)
+    MntData.UpdateResponseParams(ResList)
+    MntData.ShowResponseParams()
 
 
 if __name__ == "__main__":
