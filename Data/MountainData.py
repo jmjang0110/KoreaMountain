@@ -10,7 +10,7 @@ class MNT_REQ_TYPE:
     INFO_THEME              = 'mntnInfoThmCd'   
     SERVICEKEY              = 'ServiceKey'      
     PAGE_NO                 = 'pageNo'          
-    MAXNUM_OF_RESULT        = 'numOfRows'      
+    MAXNUM_OF_RESULT        = 'numOfRows'                                                                                                                                                                                                                                                                                                                                                                                                                                                           
 
 class MNT_RES_TYPE:
     NAME                    = 'mntnnm'
