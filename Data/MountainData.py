@@ -32,6 +32,7 @@ class MountainData:
         self.ResponParams = []
         
         self.ResParam = {
+
                 MNT_RES_TYPE.NAME                   : '',
                 MNT_RES_TYPE.HEIGHT                 : '',
                 MNT_RES_TYPE.ADDRESS                : '',
@@ -40,6 +41,7 @@ class MountainData:
                 MNT_RES_TYPE.INFO_HIKING            : '',
                 MNT_RES_TYPE.INFO_MAP_IMG           : '',
                 MNT_RES_TYPE.INFO_RECOMMAND_MAP_IMG : ''
+                
         }
 
         url         = 'api.forest.go.kr'
@@ -85,6 +87,25 @@ class MountainData:
     
     def GetSubUrl(self):
         return self.SubUrl
+    
+
+    def TEST(self):
+        
+        ResList = [ 
+            MNT_RES_TYPE.NAME
+        ,   MNT_RES_TYPE.HEIGHT
+        ,   MNT_RES_TYPE.ADDRESS
+        ,   MNT_RES_TYPE.INFO_MAIN
+        ,   MNT_RES_TYPE.INFO_MAP_IMG
+        ]
+    
+        self.AddSubUrl(MNT_REQ_TYPE.ADDRESS, DataManager.GetEncode_Utf8('서울'))
+        self.AddSubUrl(MNT_REQ_TYPE.MAXNUM_OF_RESULT, '50')
+        SubUrl = self.GetSubUrl()
+
+        self.ConnectToData(SubUrl)
+        self.UpdateResponseParams(ResList)
+        self.ShowResponseParams()
 
 
             

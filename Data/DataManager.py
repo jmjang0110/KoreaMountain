@@ -99,43 +99,6 @@ class DataManager :
         print(Datacnt)
             
 
-
-
-
-
-    def LoadByHttp(self):
-        addServiceKey = '?serviceKey=' + self.ServiceKey
-        # ResultUrl = self.Query + addServiceKey
-        # if(self.urlDetail != ""):
-        #      ResultUrl = ResultUrl + self.urlDetail
-
-        hangul_utf8 =  self.GetKoreanEncoding_utf8("지리산")#한글 인코딩
-        ResultUrl = self.Query + '?serviceKey=' + self.ServiceKey + '&mntnNm=' + hangul_utf8
-        conn    = http.client.HTTPConnection(self.Url)
-        conn.request("GET", ResultUrl)
-        req     = conn.getresponse()
-
-
-        if req.status == 200: # 성공 
-            strXML = req.read().decode('utf-8')
-            #print(strXML)
-            tree = ET.fromstring(strXML)
-            self.ItemElements = tree.iter("item")
-            i = 0
-
-
-    def Test(self):
-        for itemE in self.ItemElements:
-            MountainName = itemE.find('mntnnm')
-            info1 = itemE.find('hkngpntdscrt')
-            info2 = itemE.find('mntninfopoflc')
-            
-            print(MountainName.text)
-            print(info1.text)
-            print(info2.text)
-
-
-
 # [ GET ]
 
 

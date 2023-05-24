@@ -41,7 +41,7 @@ def InitSearchListBox():
     ListBoxScrollbar.place(x=150, y=50)
 
     TempFont = font.Font(g_Tk, size=15, weight='bold', family='Consolas')
-    SearchListBox = Listbox(g_Tk, font=TempFont, activestyle='none',
+    SearchListBox = Listbox(g_Tk, font=TempFont, activestyle='underline',
                             width=10, height=5, borderwidth=12, relief='ridge',
                             yscrollcommand=ListBoxScrollbar.set)
 
