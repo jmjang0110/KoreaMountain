@@ -16,8 +16,36 @@ class KaKaoAPImap:
 
 
         self.MapWindow = Tk()
+        self.MapWindow.protocol('WM_DELETE_WINDOW', self.ExitWindow)
+        self.MapWindow.title('MAP VIEW')
+        self.bOpen = True
 
         self.spot = []
+        self.spot_Store = []
+    
+    def Destroy(self):
+        if self.bOpen == True:
+            self.MapWindow.destroy()
+            self.bOpen = False
+
+    def Activate(self):
+        if self.bOpen == False:
+            self.MapWindow = Tk()
+            self.MapWindow.protocol('WM_DELETE_WINDOW', self.ExitWindow)
+            self.MapWindow.title('MAP VIEW')
+            self.bOpen = True
+
+    
+    def ExitWindow(self):
+        self.MapWindow.destroy()
+        self.MapWindow.quit()
+        self.bOpen = False
+        self.MapWindow = None
+
+    def IsOpen(self):
+        return self.bOpen
+     
+
 
     def getLatLng(self, addr):
         url = 'https://dapi.kakao.com/v2/local/search/address.json?query=' + addr
@@ -44,31 +72,46 @@ class KaKaoAPImap:
 
         return X,Y
     
-    def Run(self):
+    def Run(self, MountainName ):
+        if self.bOpen == False:
+            return
+
         self.MapWindow.geometry('400x500')
 
-        self.spot.clear()
+        self.spot.clear() 
         for i in range(1,4):
-            self.getLatLng('황금산', i)
+            self.getLatLng(MountainName, i)
 
-        My_label = LabelFrame(self.MapWindow)
-        My_label.pack(pady=20)
+        self.My_label = LabelFrame(self.MapWindow)
+        self.My_label.pack(pady=20)
 
-        map_widget = tkintermapview.TkinterMapView(My_label, width = 800, height = 600, corner_radius=0)
+        self.SetMarker(MountainName)
 
-
-        map_widget.set_position(self.spot[0][0], self.spot[0][1])
-        map_widget.set_marker(self.spot[0][0], self.spot[0][1])
-       
-        map_widget.set_zoom(7)
-
-
-        map_widget.pack()
         self.MapWindow.mainloop()
 
-        import codecs
+    def SetMarker(self, MountainName):
+        self.map_widget = tkintermapview.TkinterMapView(self.My_label, width = 800, height = 600, corner_radius=0)
+
+        self.spot.clear() 
+        #for i in range(1,):
+        self.getLatLng(MountainName, 1)
+
+        self.map_widget.set_position(self.spot[0][0], self.spot[0][1])
+        self.map_widget.set_marker(self.spot[0][0], self.spot[0][1], MountainName)
+        self.map_widget.set_zoom(7)
+        self.map_widget.pack()
+
+        self.spot_Store.append( self.spot[0] )
+
+    def ClearSpotStore(self):
+        self.spot_Store.clear()
+        self.spot_Store = []
+
+
+
+'''        import codecs
         f = codecs.open('map.html', 'r')
-        print(f.read())
+        print(f.read())'''
         
 
 

@@ -12,7 +12,6 @@ from googlemaps import Client
 zoom = 13
 
 # 공공데이터 API 키
-api_key = "sea100UMmw23Xycs33F1EQnumONR/9ElxBLzkilU9Yr1oT4TrCot8Y2p0jyuJP72x9rG9D8CN5yuEs6AS2sAiw=="
 
 # 서울시 구별 병원 정보 데이터
 url = "http://apis.data.go.kr/B551182/hospInfoServicev2/getHospBasisList"
@@ -38,7 +37,7 @@ for item in items:
 
 # Google Maps API 클라이언트 생성 (한달에 $20 까지 무료)
 # https://console.cloud.google.com/apis/credentials
-Google_API_Key = 'AIzaSyCWcSC_y2tIzsEmQawZyMCtKHIAc9WaXDM'
+
 gmaps = Client(key=Google_API_Key)
 
 # 서울시 지도 생성

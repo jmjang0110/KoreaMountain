@@ -64,12 +64,18 @@ class KM_ListBox: # Korea Mountain App Label
         self.ListBox.place(x = X,y = Y)
 
 
-        for i in range(100):
-            self.ListBox.insert(i + 1, 'TEST\n'  + str(i + 1))
+        #for i in range(100):
+        #    self.ListBox.insert(i + 1, 'TEST\n'  + str(i + 1))
         
         
         self.ScrollBar.config(command = self.ListBox.yview)
 
+    def InsertText(self, idx, text):
+        self.ListBox.insert(idx, text)
+
+
+    def ClearListBox(self):
+        self.ListBox.delete(0,END)
         
 
         

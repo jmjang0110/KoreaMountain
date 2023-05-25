@@ -72,6 +72,7 @@ class DataManager :
 
         if Req.status  == 200:
             strXML = Req.read().decode('utf-8')
+            # print(strXML)
             self.Tree = ET.fromstring(strXML)
             self.ItemElements = self.Tree.iter("item")
     

@@ -20,8 +20,9 @@ class MNT_RES_TYPE:
     INFO_REL_PHONENUM       = 'crcmrsghtnginfodscrt'
     INFO_TRANSPORT          = 'pbtrninfodscrt'
     INFO_HIKING             = 'hkngpntdscrt'
-    INFO_MAP_IMG            = 'mntninfomapdnldfilenm'
+    INFO_MAP_IMG            = 'hndfmsmtnmapimageseq'
     INFO_RECOMMAND_MAP_IMG  = 'rcmmncoursimageseq'
+    INFO_MNT_IMG            = 'mntnattchimageseq'
 
 
 class MountainData:
@@ -59,7 +60,10 @@ class MountainData:
         self.DataMgr.ConnectToDataByRequests()
 
     def UpdateResponseParams(self, KeyList):
+
         ItemElements = self.DataMgr.GetItemElements()
+        self.ResponParams.clear()
+
         for item in ItemElements:
             datalist = []
             for Key in KeyList:
@@ -89,24 +93,48 @@ class MountainData:
         return self.SubUrl
     
 
-    def TEST(self):
+    def UpdateResponseParamsByLocation(self, LocationName):
+        self.SubUrl = ''
         
+
         ResList = [ 
-            MNT_RES_TYPE.NAME
-        ,   MNT_RES_TYPE.HEIGHT
-        ,   MNT_RES_TYPE.ADDRESS
-        ,   MNT_RES_TYPE.INFO_MAIN
-        ,   MNT_RES_TYPE.INFO_MAP_IMG
-        ]
-    
-        self.AddSubUrl(MNT_REQ_TYPE.ADDRESS, DataManager.GetEncode_Utf8('서울'))
-        self.AddSubUrl(MNT_REQ_TYPE.MAXNUM_OF_RESULT, '50')
+                    MNT_RES_TYPE.NAME
+                ,   MNT_RES_TYPE.HEIGHT
+                ,   MNT_RES_TYPE.ADDRESS
+                ,   MNT_RES_TYPE.INFO_MAIN
+                ,   MNT_RES_TYPE.INFO_MNT_IMG
+                ]
+        
+        self.AddSubUrl(MNT_REQ_TYPE.ADDRESS, DataManager.GetEncode_Utf8(LocationName))
+        self.AddSubUrl(MNT_REQ_TYPE.MAXNUM_OF_RESULT, '300')
         SubUrl = self.GetSubUrl()
 
         self.ConnectToData(SubUrl)
         self.UpdateResponseParams(ResList)
-        self.ShowResponseParams()
+        #self.ShowResponseParams()
+
+    def UpdateResponseParamsByMountainName(self, MountainName):
+        self.SubUrl = ''
+
+        ResList = [ 
+                    MNT_RES_TYPE.NAME
+                ,   MNT_RES_TYPE.HEIGHT
+                ,   MNT_RES_TYPE.ADDRESS
+                ,   MNT_RES_TYPE.INFO_MAIN
+                ,   MNT_RES_TYPE.INFO_MNT_IMG
+                ]
+        self.AddSubUrl(MNT_REQ_TYPE.NAME, DataManager.GetEncode_Utf8(MountainName))
+        self.AddSubUrl(MNT_REQ_TYPE.MAXNUM_OF_RESULT, '300')
+        SubUrl = self.GetSubUrl()
+
+        self.ConnectToData(SubUrl)
+        self.UpdateResponseParams(ResList)
+        # self.ShowResponseParams()
 
 
             
             
+# [ G E T ]
+    def GetResponseParams(self):
+        return self.ResponParams
+    
