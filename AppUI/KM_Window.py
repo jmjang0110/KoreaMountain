@@ -65,3 +65,5 @@ class KM_Window:
         self.Window.mainloop()
 
 
+    def GetWindow(self):
+        return self.Window

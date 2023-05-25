@@ -2,6 +2,9 @@
 from Data.DataManager   import * 
 from Data.MountainData  import *
 from Data.WeatherData   import *
+from Data.KaKaoAPImapData import *
+
+
 from AppUI.KM_Window    import *
 
 def main():
@@ -14,10 +17,14 @@ def main():
     # WeaData.TEST()
 
 
+    Map = KaKaoAPImap()
 
     MyUI = KM_Window()
     MyUI.Init()
+
+    Map.Run()
     MyUI.Run()
+
 
 
 
