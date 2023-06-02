@@ -4,7 +4,7 @@ from tkinter import font
 class KM_ListBox: # Korea Mountain App Label
     def __init__(self):
         self.Window         = None # TK
-        self.ListBox          = None 
+        self.ListBox        = None 
         self.Title          = ''
 
         self.width          = ''    
@@ -72,6 +72,9 @@ class KM_ListBox: # Korea Mountain App Label
 
     def InsertText(self, idx, text):
         self.ListBox.insert(idx, text)
+    
+    def GetCurSelectionData(self):
+        return self.ListBox.curselection()
 
 
     def ClearListBox(self):

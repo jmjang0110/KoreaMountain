@@ -1,18 +1,18 @@
 
-
-
-from    AppUI.KM_Button     import *
-from    AppUI.KM_Label      import *
-from    AppUI.KM_Command    import *
-from    AppUI.KM_ListBox    import *
-from    AppUI.KM_Entry      import *
-
-
 from tkinter import *
+
+from AppUI.KM_Button  import *
+from AppUI.KM_Entry   import *
+from AppUI.KM_Label   import *
+from AppUI.KM_ListBox import *
+from AppUI.KM_Window  import *
+from AppUI.KM_Command import *
+
+import customtkinter
 
 class KM_Window:
     def __init__(self):
-        self.Window         = Tk()
+        self.Window         = customtkinter.CTk()
         self.Title          = 'Korea Mountain'
 
         self.width          = '500'    
@@ -23,6 +23,8 @@ class KM_Window:
         self.UI_SearchButton            = KM_Button()
         self.UI_MapButton               = KM_Button()
         self.UI_MoreInfoButton          = KM_Button()
+
+        self.UI_ShowInfoButton          = KM_Button()
 
         self.UI_WeatherInfo             = KM_Label()
         self.UI_RegionInfo              = KM_Label()
@@ -57,11 +59,15 @@ class KM_Window:
 
         self.UI_Entry.Init(1 + 36, 1 , self.Window, 28)
         # self.UI_SearchButton.SetCommand(self.UI_Entry.Command_GetName)
-        self.UI_SearchButton.Init(1 + 36 , 5 , self.Window, 28, 3, 'solid', 'sunken', 1, 'grey', 'black', 'Search Button')
+        self.UI_SearchButton.Init(1 + 36 , 5 , self.Window, 28, 3
+                                  , 'solid', 'sunken', 1, 'grey', 'black', 'Search Button')
 
-        self.UI_MoreInfoButton.Init(1 + 36 , 67.5 , self.Window, 28, 5, 'solid', 'sunken', 1, 'light gray', 'blue', 'More Info')
+        self.UI_MoreInfoButton.Init(1 + 36 , 67.5 , self.Window, 28, 5
+                                    , 'solid', 'sunken', 1, 'light gray', 'blue', 'More Info')
 
+ 
 
+        customtkinter.CTkOptionMenu
         menubar =   Menu(self.Window)
         menu_1  =   Menu(menubar, tearoff=0)
         menu_1.add_command(label="하위 메뉴 1-1")
@@ -82,3 +88,10 @@ class KM_Window:
         return self.UI_Entry
     def GetListBox(self):
         return self.UI_MountainListInfo
+    
+    def GetShowInfoButton(self):
+        return self.UI_ShowInfoButton
+    
+    def GetRegionInfo(self):
+        return self.UI_RegionInfo
+    

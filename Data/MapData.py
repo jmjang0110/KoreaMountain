@@ -7,45 +7,15 @@ import tkintermapview
 from tkinter import *
 
 
-class KaKaoAPImap:
+class APImap:
     def __init__(self) :
         self.DataMgr = DataManager()
 
         self.url = 'https://dapi.kakao.com/v2/local/search/keyword.json'
         self.ServiceKey = '4b26e7470a265bf96899caf9892dac65'
 
-
-        self.MapWindow = Tk()
-        self.MapWindow.protocol('WM_DELETE_WINDOW', self.ExitWindow)
-        self.MapWindow.title('MAP VIEW')
-        self.bOpen = True
-
         self.spot = []
         self.spot_Store = []
-    
-    def Destroy(self):
-        if self.bOpen == True:
-            self.MapWindow.destroy()
-            self.bOpen = False
-
-    def Activate(self):
-        if self.bOpen == False:
-            self.MapWindow = Tk()
-            self.MapWindow.protocol('WM_DELETE_WINDOW', self.ExitWindow)
-            self.MapWindow.title('MAP VIEW')
-            self.bOpen = True
-
-    
-    def ExitWindow(self):
-        self.MapWindow.destroy()
-        self.MapWindow.quit()
-        self.bOpen = False
-        self.MapWindow = None
-
-    def IsOpen(self):
-        return self.bOpen
-     
-
 
     def getLatLng(self, addr):
         url = 'https://dapi.kakao.com/v2/local/search/address.json?query=' + addr
@@ -55,10 +25,11 @@ class KaKaoAPImap:
 
         return float(match_first['x']), float(match_first['y'])
     
+# 위도 경도를 얻는다. 
     def getLatLng(self, region, page_num):
         url = 'https://dapi.kakao.com/v2/local/search/keyword.json' 
 
-        params = {'query': region,'page': page_num}
+        params  = {'query': region,'page': page_num}
         headers = {"Authorization": "KakaoAK " + self.ServiceKey}
 
         places = requests.get(url, params=params, headers=headers).json()['documents']
@@ -67,15 +38,9 @@ class KaKaoAPImap:
             Y = float(place['y'])
             spot = (Y, X)
             self.spot.append(spot)
-            
         return X,Y
     
     def Run(self, MountainName ):
-        if self.bOpen == False:
-            return
-
-        self.MapWindow.geometry('400x500')
-
         self.spot.clear() 
         for i in range(1,4):
             self.getLatLng(MountainName, i)
@@ -85,13 +50,10 @@ class KaKaoAPImap:
 
         self.SetMarker(MountainName)
 
-        self.MapWindow.mainloop()
-
     def SetMarker(self, MountainName):
         self.map_widget = tkintermapview.TkinterMapView(self.My_label, width = 800, height = 600, corner_radius=0)
 
         self.spot.clear() 
-        #for i in range(1,):
         self.getLatLng(MountainName, 1)
 
         self.map_widget.set_position(self.spot[0][0], self.spot[0][1])
@@ -105,11 +67,6 @@ class KaKaoAPImap:
         self.spot_Store.clear()
         self.spot_Store = []
 
-
-
-'''        import codecs
-        f = codecs.open('map.html', 'r')
-        print(f.read())'''
         
 
 

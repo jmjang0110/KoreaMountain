@@ -40,4 +40,7 @@ class KM_Label: # Korea Mountain App Label
         self.Label.pack()
         self.Label.place(x = X,y = Y)
 
+    def ConfigText(self, NewText):
+        self.Label.config(text = NewText)
+
         

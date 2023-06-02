@@ -15,8 +15,7 @@ g_Tk = Tk()
 g_Tk.geometry("400x600+750+200")
 DataList = []
 url = "apis.data.go.kr"
-query = "/B551182/hospInfoServicev2/getHospBasisList?serviceKey=sea100UMmw23Xycs33F1EQnumONR%2F9ElxBLzkilU9Yr1oT4TrCot8Y2p0jyuJP72x9rG9D8CN5yuEs6AS2sAiw%3D%3D&pageNo=1&numOfRows=10&sidoCd=110000&sgguCd="
-
+query = ''
 # 지역코드
 SGGUCD =   [['110001','강남구'],
             ['110002','강동구'],

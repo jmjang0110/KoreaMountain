@@ -22,7 +22,7 @@ def replyAptData(date_param, user, loc_param='11710'):
     for r in res_list:
         print( str(datetime.now()).split('.')[0], r )
         if len(r+msg)+1>noti.MAX_MSG_LENGTH:
-            noti.sendMessage( user, msg )
+            noti.sendMessage( user, msg ) # 메시지 보내기 
             msg = r+'\n'
         else:
             msg += r+'\n'
@@ -63,7 +63,11 @@ def handle(msg):
     text = msg['text']
     args = text.split(' ')
 
-    if text.startswith('지역') and len(args)>1:
+    if text.startswith('거래') and len(args)>1:
+        print('try to 거래', args[1])
+        replyAptData( args[1], chat_id, args[2] )
+   
+    elif text.startswith('지역') and len(args)>1:
         print('try to 지역', args[1])
         replyAptData( '201705', chat_id, args[1] )
     elif text.startswith('저장')  and len(args)>1:
@@ -84,7 +88,7 @@ print( '[',today,']received token :', noti.TOKEN )
 bot = telepot.Bot(noti.TOKEN)
 pprint( bot.getMe() )
 
-bot.message_loop(handle)
+bot.message_loop(handle) # 이벤트 핸들러가 메시지가 오면 계속 처리하겠다 
 
 print('Listening...')
 

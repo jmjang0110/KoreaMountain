@@ -24,6 +24,17 @@ class MNT_RES_TYPE:
     INFO_RECOMMAND_MAP_IMG  = 'rcmmncoursimageseq'
     INFO_MNT_IMG            = 'mntnattchimageseq'
 
+    NAME                    = 'mntnnm'
+    HEIGHT                  = 'mntninfohght'
+    ADDRESS                 = 'mntninfopoflc'
+    INFO_MAIN               = 'mntninfodtlinfocont'
+    INFO_REL_PHONENUM       = 'crcmrsghtnginfodscrt'
+    INFO_TRANSPORT          = 'pbtrninfodscrt'
+    INFO_HIKING             = 'hkngpntdscrt'
+    INFO_MAP_IMG            = 'hndfmsmtnmapimageseq'
+    INFO_RECOMMAND_MAP_IMG  = 'rcmmncoursimageseq'
+    INFO_MNT_IMG            = 'mntnattchimageseq'
+
 
 class MountainData:
 
@@ -81,6 +92,15 @@ class MountainData:
                 print(Param[i][1].text)
                 print()
 
+    def GetParam(self, TargetName):
+        for Param in self.ResponParams:
+            for i in range(len(Param)):
+                if Param[0][1].text == TargetName: # Param[0] : name
+                    return Param
+            
+        ResultText = 'There is No ' + TargetName
+        return ResultText
+
 
     def AddSubUrl(self, ResqueType, Data): # 'mntnNm', '지리산'
         self.SubUrl += '&' + ResqueType + '=' + Data
@@ -117,11 +137,11 @@ class MountainData:
         self.SubUrl = ''
 
         ResList = [ 
-                    MNT_RES_TYPE.NAME
-                ,   MNT_RES_TYPE.HEIGHT
-                ,   MNT_RES_TYPE.ADDRESS
-                ,   MNT_RES_TYPE.INFO_MAIN
-                ,   MNT_RES_TYPE.INFO_MNT_IMG
+                    MNT_RES_TYPE.NAME           # 0
+                ,   MNT_RES_TYPE.HEIGHT         # 1
+                ,   MNT_RES_TYPE.ADDRESS        # 2
+                ,   MNT_RES_TYPE.INFO_MAIN      # 3
+                ,   MNT_RES_TYPE.INFO_MNT_IMG   # 4
                 ]
         self.AddSubUrl(MNT_REQ_TYPE.NAME, DataManager.GetEncode_Utf8(MountainName))
         self.AddSubUrl(MNT_REQ_TYPE.MAXNUM_OF_RESULT, '300')
@@ -129,7 +149,7 @@ class MountainData:
 
         self.ConnectToData(SubUrl)
         self.UpdateResponseParams(ResList)
-        # self.ShowResponseParams()
+        #self.ShowResponseParams()
 
 
             

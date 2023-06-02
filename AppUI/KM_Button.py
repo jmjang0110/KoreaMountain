@@ -1,5 +1,7 @@
 from tkinter import *
 from tkinter import font
+import customtkinter
+import tkinter
 
 class KM_Button: # Korea Mountain App Button
     def __init__(self):
@@ -34,17 +36,9 @@ class KM_Button: # Korea Mountain App Button
         X = X * 7.7
         Y = Y * 8.3
 
-        self.Button = Button(  self.Window
-                             , overrelief   =   self.overrelief
-                             , width        =   self.width
-                             , height       =   self.height
-                             , relief       =   self.relief
-                             , borderwidth  =   self.borderwidth
-                             , foreground   =   self.foreground 
-                             , command      =   self.Command
-                             , text         =   self.text )
+        self.Button = customtkinter.CTkButton(master=Window, text=text)
         self.Button.pack()
-        self.Button.place(x = X,y = Y)
+        self.Button.place(relx = X,rely = Y, anchor=tkinter.CENTER)
 
 
 
