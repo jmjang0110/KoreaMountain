@@ -19,6 +19,8 @@ import urllib.request
 from io import BytesIO
 
 
+from Telegram import TelegramBot
+
 customtkinter.set_appearance_mode("light")  # Modes: system (default), light, dark
 customtkinter.set_default_color_theme("blue")  # Themes: blue (default), dark-blue, green
 
@@ -74,10 +76,10 @@ class ScrollableLabelProgressBarFrame(customtkinter.CTkScrollableFrame):
 
     def add_item(self, item, image=None):
         label       = customtkinter.CTkLabel(self, text=item, image=image, compound="left", padx=5, anchor="w")
-        ProgressBar = customtkinter.CTkProgressBar(self, progress_color='light green', height=15)
+        ProgressBar = customtkinter.CTkProgressBar(self, progress_color='light green', width = 120 ,height=15)
         
         label.grid(row=len(self.label_list), column=0, pady=(0, 10), sticky="w")
-        ProgressBar.grid(row=len(self.ProgressBar_List), column=2, pady=(2, 5), padx=0)
+        ProgressBar.grid(row=len(self.ProgressBar_List), column=1, pady=(2, 5), padx=0)
         
         self.label_list.append(label)
         self.ProgressBar_List.append(ProgressBar)
@@ -102,8 +104,6 @@ class ScrollableLabelProgressBarFrame(customtkinter.CTkScrollableFrame):
     def set(self, idx, value):
         ProgressBar = self.ProgressBar_List[idx]
         OriginValue = ProgressBar.get()
-        print(OriginValue)
-
         ProgressBar.set(value)
         
         
@@ -129,22 +129,21 @@ class KMountainApp:
         self.App.grid_columnconfigure((2, 3), weight=0)
         self.App.grid_rowconfigure((0, 1, 2), weight=1)       
     
-    #   [0,0][0,1][0,2][0,3]
-    #   [1,0][1,1][1,2][1,3]
-    #   [2,0][2,1][2,2][2,3]
-    #   [3,0][3,1][3,2][3,3]
+
+        self.Telegram = TelegramBot()
+
+
+        #   [0,0][0,1][0,2][0,3]
+        #   [1,0][1,1][1,2][1,3]
+        #   [2,0][2,1][2,2][2,3]
+        #   [3,0][3,1][3,2][3,3]
 
         self.Init_SideBarFrame(0,0)
         self.Init_TextBoxFrame(0,1)
         self.Init_TabViewFrame(0,2)
         self.Init_MapWidgetFrame(1,1)
         self.Init_MountainListSidebarFrame(1,2)
-        '''
-                    N
-                W       E
-                    S
-        '''
-    
+
     def Init_SideBarFrame(self, _Row, _Column):
         current_path            = os.path.dirname(os.path.realpath(__file__)) + '/ImageFile/'
         BackImage               = Image.open(current_path + "MountainBack1.jpg")
@@ -217,24 +216,25 @@ class KMountainApp:
         self.tabview.add("산 높이 그래프")
         self.tabview.add("사진")
         self.tabview.tab("날씨").grid_columnconfigure(0, weight=1)  # configure grid of individual tabs
-        self.tabview.tab("산 높이 그래프").grid_columnconfigure(2, weight=1)
+        self.tabview.tab("산 높이 그래프").grid_columnconfigure(1, weight=1)
         #self.tabview.configure(require_redraw=True, kwargs="command")
 
 
         self.optionmenu_1 = customtkinter.CTkOptionMenu(self.tabview.tab("날씨"), dynamic_resizing=False,
                                                         values=["Value 1", "Value 2", "Value Long Long Long"])
         self.optionmenu_1.grid(row=0, column=0, padx=(10, 10), pady=(10, 0))
+
         self.combobox_1 = customtkinter.CTkComboBox(self.tabview.tab("날씨"),
                                                     values=["Value 1", "Value 2", "Value Long....."])
         self.combobox_1.grid(row=1, column=0, padx=(10, 10), pady=(10, 0))
 
         # MOUNTAINS LIST - SCROLL BAR BUTTON 
         self.ProgressBar_List = ScrollableLabelProgressBarFrame(master=self.tabview.tab("산 높이 그래프")
-                                                       , width=350
-                                                       , height = 200
-                                                       , corner_radius=10)
+                                                       , width=  250
+                                                       , height = 30
+                                                       , corner_radius=0)
         
-        self.ProgressBar_List.grid(row=0, column=0, columnspan = 1, padx=(5, 5), pady=(5, 0), sticky="nsew")
+        self.ProgressBar_List.grid(row=0, column=0, columnspan = 1, padx=(0, 5), pady=(0, 0), sticky="nsew")
 
 
 
@@ -435,4 +435,4 @@ class KMountainApp:
 
     
     def CallBack_TelegramButton(self):
-        print('CallBack_TelegramButton')
+        self.Telegram.SendMessage("안녕!! VScode 에서 보냈어")
