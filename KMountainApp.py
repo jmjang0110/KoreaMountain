@@ -192,6 +192,16 @@ class KMountainApp:
         
         self.Telegram_Button.grid(row=1, column=0, padx=(20, 0), pady=(150, 0))
 
+        self.Gmail_Icon_Img = customtkinter.CTkImage(Image.open(os.path.join(current_path, "GmailLogo.png")), size=(50,50))
+        
+        self.Gmail_Button = customtkinter.CTkButton(self.sidebar_frame
+                                                       , text=""
+                                                       , image=self.Gmail_Icon_Img
+                                                       , fg_color="transparent"
+                                                       , hover_color='white'
+                                                       , command = self.CallBack_GmailButton)
+        
+        self.Gmail_Button.grid(row=1, column=0, padx=(20, 0), pady=(30, 0))
 
     def Init_TextBoxFrame(self, _Row, _Column):
         #self.TextBox_Frame = customtkinter.CTkFrame(master = self.App, corner_radius=10, fg_color="transparent")
@@ -386,6 +396,7 @@ class KMountainApp:
         
         X = -1
         Y = -1
+        
         for place in places:
             X = float(place['x'])
             Y = float(place['y'])
@@ -436,3 +447,7 @@ class KMountainApp:
     
     def CallBack_TelegramButton(self):
         self.Telegram.SendMessage("안녕!! VScode 에서 보냈어")
+
+
+    def CallBack_GmailButton(self):
+        print('CallBack GmailButton')

@@ -1,43 +1,89 @@
-import imghdr #이미지 첨부를 위한 라이브러리
-import smtplib
-from email.message import EmailMessage
-
-# STMP 서버의 url과 port 번호
-SMTP_SERVER = 'smtp.gmail.com'
-SMTP_PORT = 465
-
-# 1. SMTP 서버 연결
-smtp = smtplib.SMTP_SSL(SMTP_SERVER, SMTP_PORT)
-
-EMAIL_ADDR = '본인의 이메일 계정'
-EMAIL_PASSWORD = '본인의 이메일 계정 비밀번호'
-
-# 2. SMTP 서버에 로그인
-smtp.login(EMAIL_ADDR, EMAIL_PASSWORD)
-
-# 3. MIME 형태의 이메일 메세지 작성
-message = EmailMessage()
-message.set_content('이메일 본문')
-message["Subject"] = "이메일 제목"
-message["From"] = EMAIL_ADDR  #보내는 사람의 이메일 계정
-message["To"] = '받는 사람의 이메일 계정'
-
-# 3-1. 이메일에 사진 첨부하기
-with open('사진경로', 'rb') as image:
-  image_file = image.read() # 이미지 파일 읽어오기
-
-image_type = imghdr.what('e-mail', image_file)
-message.add_attachment(image_file, maintype = 'image', subtype = image_type)
+import smtplib  # SMTP 사용을 위한 모듈
+import re  # Regular Expression을 활용하기 위한 모듈
+from email.mime.multipart import MIMEMultipart  # 메일의 Data 영역의 메시지를 만드는 모듈
+from email.mime.text import MIMEText  # 메일의 본문 내용을 만드는 모듈
+from email.mime.image import MIMEImage  # 메일의 이미지 파일을 base64 형식으로 변환하기 위한 모듈
+ 
 
 
-# 4. 서버로 메일 보내기
-smtp.send_message(message)
 
-# 5. 메일을 보내면 서버와의 연결 끊기
-smtp.quit()
+
+
+ 
+
+ 
+
+ 
+
+
 
 
 class GMail:
     def __init__(self):
-        pass 
+      # smpt 서버와 연결
+      self.gmail_smtp = "smtp.gmail.com"  # gmail smtp 주소
+      self.gmail_port = 465  # gmail smtp 포트번호. 고정(변경 불가)
+      self.smtp = smtplib.SMTP_SSL(self.gmail_smtp, self.gmail_port) 
+      # 로그인
+      self.my_account       = ""
+      self.my_password      = ""
+      
+      # 메일을 받을 계정
+      self.to_mail          = "" 
+      # 메일 내용 
+      self.content          = '' 
+      # 메일 기본 정보 설정
+      self.msg = MIMEMultipart()
+
+    def LogIn(self, account, password ):
+        self.my_account   = account
+        self.my_password  = password
+
+        self.smtp.login(self.my_account, self.my_password)
+        self.msg["From"]     = self.my_account
+
+    def SetContent(self, contentText):
+        # 메일 본문 내용
+        self.content = contentText
+
+    def SetToEmail(self, to_Email):
+        self.to_mail         = to_Email
+        self.msg["To"]       = self.to_mail
+
+    def SetMailTitle(self, title):
+        self.msg["subject"] = title
     
+
+    # 받는 메일 유효성 검사 거친 후 메일 전송
+    def sendEmail(self):
+      content_part = MIMEText(self.content, "plain")
+      self.msg.attach(content_part)
+
+      # 이미지 파일 추가
+      '''image_name = "test.png"
+      with open(image_name, 'rb') as file:
+          img = MIMEImage(file.read())
+          img.add_header('Content-Disposition', 'attachment', filename=image_name)
+          msg.attach(img)'''
+      
+
+      reg = "^[a-zA-Z0-9.+_-]+@[a-zA-Z0-9]+\.[a-zA-Z]{2,3}$"  # 유효성 검사를 위한 정규표현식
+      if re.match(reg, self.to_mail):
+          self.smtp.sendmail(self.my_account, self.to_mail, self.msg.as_string())
+          print("정상적으로 메일이 발송되었습니다.")
+      else:
+          print("받으실 메일 주소를 정확히 입력하십시오.")
+
+
+    def Quit(self):
+        self.smtp.quit()
+
+
+gmailBot = GMail()
+gmailBot.LogIn("jmjang0110@gmail.com", "emwmxyenybwwnnxt")
+gmailBot.SetMailTitle('장재문이 파이썬에서 보내는 메일입니다.')
+gmailBot.SetToEmail("jmjang0110@gmail.com")
+gmailBot.SetContent("안녕하세요\n 장재문입니다.\n 잘부탁드립니다..\n")
+gmailBot.sendEmail()
+
+gmailBot.Quit()

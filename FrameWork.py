@@ -35,9 +35,6 @@ class KM_FrameWork:
     def Init(self):
         KM_FrameWork.Window.Init()
 
-
-
-
         KM_FrameWork.SearchEntry = KM_FrameWork.Window.GetEntry()
         KM_FrameWork.SearchEntry.Bind('<Return>', KM_FrameWork.SearchCommand)
 
