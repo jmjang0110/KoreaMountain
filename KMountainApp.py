@@ -20,6 +20,9 @@ from io import BytesIO
 
 
 from Telegram import TelegramBot
+from Email import *
+from Weather import *
+
 
 customtkinter.set_appearance_mode("light")  # Modes: system (default), light, dark
 customtkinter.set_default_color_theme("blue")  # Themes: blue (default), dark-blue, green
@@ -34,9 +37,9 @@ class ScrollableLabelButtonFrame(customtkinter.CTkScrollableFrame):
         self.label_list = []
         self.button_list = []
 
-    def add_item(self, item, image=None):
-        label = customtkinter.CTkLabel(self, text=item, image=image, compound="left", padx=5, anchor="w")
-        button = customtkinter.CTkButton(self, text="보기", width=50, height=24)
+    def add_item(self,ButtonText, item, image=None):
+        label  = customtkinter.CTkLabel(self, text=item, image=image, compound="left", padx=5, anchor="w")
+        button = customtkinter.CTkButton(self, text = ButtonText, width=50, height=24)
         
         if self.command is not None:
             button.configure(command=lambda: self.command(item))
@@ -105,11 +108,6 @@ class ScrollableLabelProgressBarFrame(customtkinter.CTkScrollableFrame):
         ProgressBar = self.ProgressBar_List[idx]
         OriginValue = ProgressBar.get()
         ProgressBar.set(value)
-        
-        
-
-        
-    
 
 class KMountainApp:
     def __init__(self):
@@ -129,10 +127,15 @@ class KMountainApp:
         self.App.grid_columnconfigure((2, 3), weight=0)
         self.App.grid_rowconfigure((0, 1, 2), weight=1)       
     
-
+        self.Search_Location = ''
         self.Telegram = TelegramBot()
+        self.gmailBot = GMail()
+        self.WeatherAPI = OpenWeatherAPI()
+        self.TextBox_ResultText = ''
 
+        self.Favorites_Info = list() # 즐겨찾기 - 산에대한 정보들 저장 
 
+        
         #   [0,0][0,1][0,2][0,3]
         #   [1,0][1,1][1,2][1,3]
         #   [2,0][2,1][2,2][2,3]
@@ -225,18 +228,25 @@ class KMountainApp:
         self.tabview.add("날씨")
         self.tabview.add("산 높이 그래프")
         self.tabview.add("사진")
+        self.tabview.add("즐겨찾기")
+
         self.tabview.tab("날씨").grid_columnconfigure(0, weight=1)  # configure grid of individual tabs
         self.tabview.tab("산 높이 그래프").grid_columnconfigure(1, weight=1)
         #self.tabview.configure(require_redraw=True, kwargs="command")
 
+        self.Favorites_Info_Button_List = ScrollableLabelButtonFrame(master=self.tabview.tab("즐겨찾기")
+                                                                        , width=250
+                                                                        , command=self.Callback_Favorites_Delete_Button
+                                                                        , corner_radius=0
+                                                                        )
+        
+        self.Favorites_Info_Button_List.grid(row=0, column=2, padx=0, pady=0, sticky="nsew")
+        
 
-        self.optionmenu_1 = customtkinter.CTkOptionMenu(self.tabview.tab("날씨"), dynamic_resizing=False,
-                                                        values=["Value 1", "Value 2", "Value Long Long Long"])
-        self.optionmenu_1.grid(row=0, column=0, padx=(10, 10), pady=(10, 0))
 
-        self.combobox_1 = customtkinter.CTkComboBox(self.tabview.tab("날씨"),
-                                                    values=["Value 1", "Value 2", "Value Long....."])
-        self.combobox_1.grid(row=1, column=0, padx=(10, 10), pady=(10, 0))
+        #self.combobox_1 = customtkinter.CTkComboBox(self.tabview.tab("날씨"),
+        #                                            values=["Value 1", "Value 2", "Value Long....."])
+        #self.combobox_1.grid(row=1, column=0, padx=(10, 10), pady=(10, 0))
 
         # MOUNTAINS LIST - SCROLL BAR BUTTON 
         self.ProgressBar_List = ScrollableLabelProgressBarFrame(master=self.tabview.tab("산 높이 그래프")
@@ -247,7 +257,16 @@ class KMountainApp:
         self.ProgressBar_List.grid(row=0, column=0, columnspan = 1, padx=(0, 5), pady=(0, 0), sticky="nsew")
 
 
-
+        
+        self.Weather_label          = customtkinter.CTkLabel(master = self.tabview.tab('날씨') 
+                                                , text=''
+                                                , image = None
+                                                , compound="left"
+                                                , padx=5
+                                                , anchor="n")
+        self.Weather_label.grid(row= 1, column=0, rowspan = 1, columnspan = 1)
+        self.Weather_label2          = customtkinter.CTkLabel(master = self.tabview.tab('날씨'), text='' )
+        self.Weather_label2.grid(row=2, column=0, rowspan = 1, columnspan = 1)
 
     
     def Init_MapWidgetFrame(self, _Row, _Column):
@@ -278,6 +297,7 @@ class KMountainApp:
         # MOUNTAINS LIST - SCROLL BAR BUTTON 
         image_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "test_images")
 
+        
         self.MountainList = ScrollableLabelButtonFrame(master=self.MntListSidebar_Frame
                                                        , width=300
                                                        , height = 250
@@ -285,11 +305,17 @@ class KMountainApp:
                                                        , corner_radius=0)
         
         self.MountainList.grid(row=2, column=0, columnspan = 2, padx=(10, 10), pady=(10, 0), sticky="nsew")
+        
         for i in range(20):  # add items with images
-            self.MountainList.add_item(f"image and item {i}", 
+            self.MountainList.add_item("Command",f"image and item {i}", 
                                        image=customtkinter.CTkImage(Image.open(os.path.join(image_path, "chat_light.png"))))
             
         self.SelectedMntName = ''
+
+        self.optionmenu_1 = customtkinter.CTkOptionMenu(master=self.MntListSidebar_Frame, dynamic_resizing=False,
+                                                        values=["Value 1", "Value 2", "Value Long Long Long"])
+        self.optionmenu_1.grid(row=3, column=0, padx=(10, 10), pady=(10, 0))
+
 
 # MAIN RUN 
     def Run(self):
@@ -311,8 +337,15 @@ class KMountainApp:
         self.SelectedMntName = MntName
         print(f"label button frame clicked: {item}")
         
+        #if self.Search_Location[-1] != '산':
+        #    MntName = self.Search_Location + ' ' +MntName
         # 선택한 산을 지도에 표기한다. 
-        TargetSpot = self.GetMarkSpot(MntName)
+        TargetSpot = ''
+        if self.Search_Location[-1] != '산':
+            TargetSpot = self.GetMarkSpot(self.Search_Location + ' ' + MntName)
+        else :
+            TargetSpot = self.GetMarkSpot(MntName)
+
         if TargetSpot[0] != -1:
             self.map_widget.set_position(TargetSpot[0], TargetSpot[1])
             self.marker_list.append(self.map_widget.set_marker(TargetSpot[0], TargetSpot[1] ,text= MntName
@@ -327,19 +360,33 @@ class KMountainApp:
         InfoManin   = MountainParam[3][1].text
         InfoImg     = MountainParam[4][1].text
 
-
-        ResultText = name + '\n\n' + \
-                    '높이 : '        + Height   + '\n\n'+   \
-                    '주소 : '        + Address  +  '\n\n'+ \
-                    '전화번호 : '    + InfoManin  + '\n\n' +  \
-                    '교통편 : '      + InfoImg + '\n\n'
+        self.TextBox_ResultText = ''
+        self.TextBox_ResultText = name + '\n\n' + \
+                    '높이 : '           + Height     + '\n\n'+      \
+                    '주소 : '           + Address    + '\n\n'+      \
+                    '정보 : ' +'\n\n'   + InfoManin  + '\n\n'      
+                    
 
         self.TextBox_MntInfo.delete('0.0', 'end')
-        self.TextBox_MntInfo.insert("0.0", ResultText) # TEST
+        self.TextBox_MntInfo.insert("0.0", self.TextBox_ResultText) # TEST
+
+        IsInMntInfo = False
+        for i in range(len(self.Favorites_Info)):
+            if self.Favorites_Info[i][0] == name:
+                IsInMntInfo = True
+                break
+        
+        if IsInMntInfo == False:
+            self.Favorites_Info.append([name, self.TextBox_ResultText])
+            self.Favorites_Info_Button_List.add_item('삭제', name)
+
+
+        self.TabViewReset()
 
     def Callback_EntryButton(self):
 
         Input = self.SearchEntry.get()
+        self.Search_Location = Input
         # KM_FrameWork.Map.SetMarker(Input)
         if Input[-1] == '산':
             self.MntData.UpdateResponseParamsByMountainName(Input)
@@ -356,13 +403,13 @@ class KMountainApp:
             Data = Param[0][1]
             MntName = Data.text
             idx += 1
-            self.MountainList.add_item(MntName, image=customtkinter.CTkImage
+            self.MountainList.add_item("보기", MntName, image=customtkinter.CTkImage
                                        (Image.open(os.path.join(current_dir, "ImageFile", "MountainLogo4_Blue.png"))))
         
         #self.map_widget.set_address(Input)
-        self.map_marks.clear()
-        for i in range(1,4):
-            self.getLatLng(Input, i)
+        #self.map_marks.clear()
+        #for i in range(1,4):
+        #    self.getLatLng(Input, i)
 # MARK 
         TargetSpot = self.GetMarkSpot(Input)
         if TargetSpot[0] != -1:
@@ -385,7 +432,7 @@ class KMountainApp:
             X = float(place['x'])
             Y = float(place['y'])
             spot = (Y, X)
-            print(spot)
+            # print(spot)
             self.map_marks.append(spot)
         
     def GetMarkSpot(self, Target):
@@ -410,8 +457,8 @@ class KMountainApp:
         for marker in self.marker_list:
             marker.delete()
 
-            
-        
+        self.Favorites_Info.clear()
+
 
     def CallBack_TabView(self):
         TabName     = self.tabview.get()
@@ -442,12 +489,106 @@ class KMountainApp:
                     Img         = customtkinter.CTkImage(UrlOpen_Img, size=(250, 250))
                     label       = customtkinter.CTkLabel(master = self.tabview.tab('사진') , text='', image = Img, compound="left", padx=5, anchor="w")
                     label.grid(row=0, column=0, rowspan = 3, columnspan = 3)
-
-
     
+        elif TabName == '날씨':
+            self.ResetWeatherTabView()
+
     def CallBack_TelegramButton(self):
         self.Telegram.SendMessage("안녕!! VScode 에서 보냈어")
 
 
     def CallBack_GmailButton(self):
-        print('CallBack GmailButton')
+        self.gmailBot.LogIn("jmjang0110@gmail.com", "emwmxyenybwwnnxt")
+
+        dialog = customtkinter.CTkInputDialog(text="받는 사람 :", title="Gmail")
+
+        EmailAddr = dialog.get_input()
+        print("이메일 입력 :", EmailAddr)
+        
+        EmailContent = self.TextBox_ResultText
+        print(EmailContent)
+
+        self.gmailBot.SetMailTitle('Korea Mountains 에서 보낸 메일입니다.') 
+        self.gmailBot.SetContent(EmailContent)
+        self.gmailBot.SetToEmail(EmailAddr)
+
+        self.gmailBot.sendEmail()
+        self.gmailBot.Quit()
+
+
+    def ResetWeatherTabView(self):
+            TargetSpot = [0,0]
+            if self.Search_Location[-1] != '산':
+                TargetSpot = self.GetMarkSpot(self.Search_Location + ' ' + self.SelectedMntName)
+            else :
+                TargetSpot = self.GetMarkSpot(self.SelectedMntName)
+        
+            self.WeatherAPI.UpdateData(TargetSpot[0], TargetSpot[1])
+            self.WeatherAPI.ShowData()
+
+            name            = self.WeatherAPI.GetData(WEATHER_DATA_TYPE.NAME)
+            Weather_Desc    = self.WeatherAPI.GetData(WEATHER_DATA_TYPE.WEATHER_DESC)
+            Temp            = self.WeatherAPI.GetData(WEATHER_DATA_TYPE.TEMP)
+            Temp_Max        = self.WeatherAPI.GetData(WEATHER_DATA_TYPE.TEMP_MAX)
+            Temp_Min        = self.WeatherAPI.GetData(WEATHER_DATA_TYPE.TEMP_MIN)
+
+            current_path   = os.path.dirname(os.path.realpath(__file__)) + '/ImageFile/'
+
+
+            ImgName = 'Sun.png'
+            if Weather_Desc == 'clear sky':
+                ImgName = 'Sun.png'
+            if Weather_Desc == 'few clouds':
+                ImgName = 'few clouds.png'
+            if Weather_Desc == 'scattered clouds':
+                ImgName = 'mist.png'
+            if Weather_Desc == 'broken clouds':
+                ImgName = 'clouds.png'
+            if Weather_Desc == 'shower rain':
+                ImgName = 'shower rain.png'
+            if Weather_Desc == 'rain':
+                ImgName = 'rain.png'
+            if Weather_Desc == 'thunderstorm':
+                 ImgName = 'thunderstorm.png'
+            if Weather_Desc == 'snow':
+                 ImgName = 'Sun.png'
+            if Weather_Desc == 'mist':
+                ImgName = 'mist.png'
+                 
+
+
+            WeatherImg     = customtkinter.CTkImage(Image.open(os.path.join(current_path, ImgName)), size=(100,100))
+
+            Weather_Text = "지역 : " + name + '\n' \
+                            + "기온 : " + str(Temp) + '\n' \
+                            + "최저기온 : " + str(Temp_Min) + '\n' \
+                            + "최고기온 : " + str(Temp_Max) + '\n' \
+
+
+            self.Weather_label.configure(image = WeatherImg)
+            self.Weather_label2.configure(text = Weather_Text)
+
+    def TabViewReset(self):
+        ResParams   = self.MntData.GetResponseParams()
+        # 사진 리셋  
+        for Param in ResParams:
+                MntName = Param[0][1].text
+                if MntName == self.SelectedMntName:
+                    ImgUrl = Param[4][1].text 
+                    # request.urlopen()
+                    # HTTP Error 403: Forbidden 에러 때문에 하단의 소스 한 줄을 추가해주었다.
+                    req         = urllib.request.Request(ImgUrl, headers = {"User-Agent" : "Mozilla/5.0"})
+                    res         = urllib.request.urlopen(req).read()
+                    UrlOpen_Img = Image.open(BytesIO(res))
+                    Img         = customtkinter.CTkImage(UrlOpen_Img, size=(250, 250))
+                    label       = customtkinter.CTkLabel(master = self.tabview.tab('사진') , text='', image = Img, compound="left", padx=5, anchor="w")
+                    label.grid(row=0, column=0, rowspan = 3, columnspan = 3)
+    
+        # 날씨 리셋
+        self.ResetWeatherTabView()
+
+
+    def Callback_Favorites_Delete_Button(self, item):
+        print('Label Button' + item)
+        self.Favorites_Info_Button_List.remove_item(item)
+

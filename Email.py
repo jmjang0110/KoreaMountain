@@ -4,20 +4,6 @@ from email.mime.multipart import MIMEMultipart  # 메일의 Data 영역의 메�
 from email.mime.text import MIMEText  # 메일의 본문 내용을 만드는 모듈
 from email.mime.image import MIMEImage  # 메일의 이미지 파일을 base64 형식으로 변환하기 위한 모듈
  
-
-
-
-
-
- 
-
- 
-
- 
-
-
-
-
 class GMail:
     def __init__(self):
       # smpt 서버와 연결
@@ -79,11 +65,5 @@ class GMail:
         self.smtp.quit()
 
 
-gmailBot = GMail()
-gmailBot.LogIn("jmjang0110@gmail.com", "emwmxyenybwwnnxt")
-gmailBot.SetMailTitle('장재문이 파이썬에서 보내는 메일입니다.')
-gmailBot.SetToEmail("jmjang0110@gmail.com")
-gmailBot.SetContent("안녕하세요\n 장재문입니다.\n 잘부탁드립니다..\n")
-gmailBot.sendEmail()
 
-gmailBot.Quit()
+
