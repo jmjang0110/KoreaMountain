@@ -17,7 +17,7 @@ class WEATHER_DATA_TYPE:
 
 class OpenWeatherAPI:
     def __init__(self):
-        self.apikey = '6794c2820857cf3322a376f24ed3aa76'
+
         #city = "Seoul"
         #api = f"http://api.openweathermap.org/data/2.5/weather?q={city}&appid={apikey}"
 

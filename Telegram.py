@@ -14,9 +14,7 @@ from urllib.request import urlopen
 
 class TelegramBot:
     def __init__(self):
-        self.UserName   = 'Realestate_Student_JJM_bot'
-        self.Token      = '6083907076:AAEmuBc90HO070E2EK6WmD0Sle9raZPDMxw'
-        self.ChatID     = '5725518891'
+
 
         self.Bot        = telepot.Bot(self.Token)
 

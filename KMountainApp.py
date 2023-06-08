@@ -37,6 +37,15 @@ class ScrollableLabelButtonFrame(customtkinter.CTkScrollableFrame):
         self.label_list = []
         self.button_list = []
 
+        self.Content = None
+    
+    def SetContent(self, content):
+        self.Content = content
+
+    def GetContent(self):
+        return self.Content
+    
+
     def add_item(self,ButtonText, item, image=None):
         label  = customtkinter.CTkLabel(self, text=item, image=image, compound="left", padx=5, anchor="w")
         button = customtkinter.CTkButton(self, text = ButtonText, width=50, height=24)
@@ -114,8 +123,7 @@ class KMountainApp:
         self.MntData   = MountainData()
         self.WeaData   = WeatherData()
 
-        self.KaKao_url          = 'https://dapi.kakao.com/v2/local/search/keyword.json'
-        self.KaKao_ServiceKey   = '4b26e7470a265bf96899caf9892dac65'
+
         
 
 # APPLICATION - MAIN WINDOW 
@@ -378,6 +386,8 @@ class KMountainApp:
         
         if IsInMntInfo == False:
             self.Favorites_Info.append([name, self.TextBox_ResultText])
+            
+            self.Favorites_Info_Button_List.SetContent(self.TextBox_ResultText)
             self.Favorites_Info_Button_List.add_item('삭제', name)
 
 
@@ -498,7 +508,6 @@ class KMountainApp:
 
 
     def CallBack_GmailButton(self):
-        self.gmailBot.LogIn("jmjang0110@gmail.com", "emwmxyenybwwnnxt")
 
         dialog = customtkinter.CTkInputDialog(text="받는 사람 :", title="Gmail")
 
